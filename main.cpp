@@ -1,91 +1,81 @@
 #include <iostream>
 #include <fstream>
-#include<sstream>
-#include<iomanip>
-#include<vector>
 #include <string>
+#include <iomanip>
+#include<sstream>
 
 using namespace std;
 
-struct DiseaseData {
-    string diseaseCode;
-    string diseaseName;
-    int year;
-    string county;
-    string gender;
-    int count;
-    double rate=count*100000;
-};
-
 void viewCidDataByDisease(string diseaseDataFile, string diseaseInfoFile, string diseaseCode) {
-vector<DiseaseData> data;
     ifstream diseaseData(diseaseDataFile);
     ifstream diseaseInfo(diseaseInfoFile);
     string line;
     getline(diseaseData, line); // skip header line
-    while (getline(diseaseData, line)) {
-        DiseaseData d;
-        stringstream ss(line);
-        getline(ss, d.county, ',');
-        getline(ss, d.diseaseCode, ',');
-        ss >> d.year;
-        ss.ignore();
-        getline(ss, d.gender, ',');
-        ss >> d.count;
-        ss.ignore();
-        if (d.count > 0) {
-            data.push_back(d);
-        }
-    }
-    diseaseData.close();
     getline(diseaseInfo, line); // skip header line
-    while (getline(diseaseInfo, line)) {
-        stringstream ss(line);
-        string code, name;
-        double rate;
-        getline(ss, code, ',');
-        getline(ss, name, ',');
-        ss >> rate;
-        for (auto& d : data) {
-            if (d.diseaseCode == code && d.diseaseCode == diseaseCode) {
-                d.diseaseName = name;
-                d.rate = rate;
-            }
-        }
-    }
-    diseaseInfo.close();
     // Display the summary header
     cout << "SUMMARY BY INFECTIOUS DISEASE" << endl;
     cout << "==============================================================" << endl;
-    cout << "DIS-CODE   DIS-NAME   YEAR   COUNTY   GENDER  COUNT     RATE" << endl;
+    cout << "DIS-CODE DIS-NAME YEAR    COUNTY   GENDER  COUNT   RATE"    << endl;
     cout << "==============================================================" << endl;
     // Display the matching data
-    for (auto& d : data) {
-        if (d.diseaseCode == diseaseCode) {
-            cout << setw(6) << d.diseaseCode << " ";
-            cout << setw(14) << d.diseaseName << " ";
-            cout << setw(4) << d.year << " ";
-            cout << setw(12) << d.county << " ";
-            cout << setw(10) << d.gender << " ";
-            cout << setw(5) << d.count << " ";
-            cout << setw(8) << d.rate << endl;
+    while (getline(diseaseData, line)) {
+        string county, code, gender;
+        int year, count, population;
+        double rate;
+        istringstream ss(line);
+        getline(ss, county, ',');
+        getline(ss, code, ',');
+        ss >> year;
+        ss.ignore();
+        getline(ss, gender, ',');
+        ss >> count;
+        ss.ignore();
+        ss >> population;
+        ss.ignore();
+        if (code == diseaseCode && count > 0) {
+            rate = static_cast<double>(count) / population * 100000;
+            cout << setw(6) << code << " ";
+            cout << setw(14) << "" << " ";
+            cout << setw(4) << year << " ";
+            cout << setw(12) << county << " ";
+            cout << setw(10) << gender << " ";
+            cout << setw(5) << count << " ";
+            cout << setw(8) << fixed << setprecision(2) << rate << endl;
         }
     }
     // Display the summary footer
     int totalCount = 0;
     double totalRate = 0.0;
-    for (auto& d : data) {
-        if (d.diseaseCode == diseaseCode) {
-            totalCount += d.count;
-            totalRate += d.rate;
+    diseaseInfo.clear();
+    diseaseInfo.seekg(0, ios::beg); // reset the file pointer
+    getline(diseaseInfo, line); // skip header line
+    while (getline(diseaseInfo, line)) {
+        string code, name;
+        double rate;
+        istringstream ss(line);
+        getline(ss, code, ',');
+        getline(ss, name, ',');
+        ss >> rate;
+        if (code == diseaseCode) {
+            name = name.substr(1, name.length() - 2); // remove quotes from name
+            cout << setw(6) << code << " ";
+            cout << setw(14) << name << " ";
+            cout << setw(4) << "" << " ";
+            cout << setw(12) << "" << " ";
+            cout << setw(10) << "" << " ";
+            cout << setw(5) << "" << " ";
+            cout << setw(8) << fixed << setprecision(2) << rate << endl;
+            totalRate = rate;
         }
     }
+    diseaseData.close();
+    diseaseInfo.close();
     cout << "==============================================================" << endl;
-    cout << "TOTALS  " << setw(40) << totalCount << " " << setw(8) << totalRate << endl;
+    cout << "TOTALS  " << setw(5) << "" << " " << setw(8) << fixed << setprecision(2) << totalRate << endl;
     cout << "==============================================================" << endl;
 }
 
 int main() {
-    viewCidDataByDisease("cid_data.txt", "disease_info.txt", "C0DE");// replace "CODE" with the desired disease code
+    viewCidDataByDisease("cid_data.txt", "disease_info.txt", "CODE"); // replace "CODE" with the desired disease code
     return 0;
 }
