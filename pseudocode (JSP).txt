@@ -1,0 +1,38 @@
+Here is a pseudocode for a function that reads California infectious disease cases data from the two data files and extracts data for each disease record using JSP:
+<%
+void extractDiseaseData(String diseaseDataFile, String diseaseInfoFile, String diseaseCode) {
+    // Open the disease data file
+    BufferedReader diseaseData = new BufferedReader(new FileReader(diseaseDataFile));
+    String diseaseDataLine;
+    // Open the disease info file
+    BufferedReader diseaseInfo = new BufferedReader(new FileReader(diseaseInfoFile));
+    String diseaseInfoLine;
+    // Loop through the disease data file
+    while ((diseaseDataLine = diseaseData.readLine()) != null) {
+        // Split the line into fields
+        String[] fields = diseaseDataLine.split(",");
+        // Check if the disease code matches
+        if (fields[1].equals(diseaseCode)) {
+            // Loop through the disease info file
+            while ((diseaseInfoLine = diseaseInfo.readLine()) != null) {
+                // Split the line into fields
+                String[] infoFields = diseaseInfoLine.split(",");
+                // Check if the disease code matches
+                if (infoFields[0].equals(diseaseCode)) {
+                    // Display the matching data
+                    out.println("Disease: " + infoFields[1]);
+                    out.println("County: " + fields[0]);
+                    out.println("Year: " + fields[2]);
+                    out.println("Sex: " + fields[3]);
+                    out.println("Cases: " + fields[4]);
+                    out.println("<br>");
+                }
+            }
+            // Reset the disease info file pointer
+            diseaseInfo = new BufferedReader(new FileReader(diseaseInfoFile));
+        }
+    }
+    // Close the files
+    diseaseData.close();
+    diseaseInfo.close();
+}
