@@ -22,7 +22,7 @@ void viewCidDataByDisease(string diseaseDataFile, string diseaseInfoFile, string
         string county, code, gender;
         int year, count, population;
         double rate;
-        istringstream ss(line);
+        stringstream ss(line);
         getline(ss, county, ',');
         getline(ss, code, ',');
         ss >> year;
@@ -52,7 +52,7 @@ void viewCidDataByDisease(string diseaseDataFile, string diseaseInfoFile, string
     while (getline(diseaseInfo, line)) {
         string code, name;
         double rate;
-        istringstream ss(line);
+        stringstream ss(line);
         getline(ss, code, ',');
         getline(ss, name, ',');
         ss >> rate;
