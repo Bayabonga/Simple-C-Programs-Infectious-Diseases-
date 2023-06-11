@@ -1,0 +1,52 @@
+void extractDiseaseData(String diseaseDataFile, String diseaseInfoFile, String diseaseCode) {
+    // Open the disease data file
+    BufferedReader diseaseData = new BufferedReader(new FileReader(diseaseDataFile));
+    String diseaseDataLine;
+    // Open the disease info file
+    BufferedReader diseaseInfo = new BufferedReader(new FileReader(diseaseInfoFile));
+    String diseaseInfoLine;
+    // Initialize variables for totals
+    int totalCount = 0;
+    double totalRate = 0.0;
+    // Display the summary header
+    out.println("<h2>SUMMARY BY INFECTIOUS DISEASE</h2>");
+    out.println("<table>");
+    out.println("<tr><th>DIS-CODE</th><th>DIS-NAME</th><th>YEAR</th><th>COUNTY</th><th>GENDER</th><th>COUNT</th><th>RATE</th></tr>");
+    // Loop through the disease data file
+    while ((diseaseDataLine = diseaseData.readLine()) != null) {
+        // Split the line into fields
+        String[] fields = diseaseDataLine.split(",");
+        // Check if the disease code matches and the count is not zero
+        if (fields[1].equals(diseaseCode) && Integer.parseInt(fields[4]) > 0) {
+            // Loop through the disease info file
+            while ((diseaseInfoLine = diseaseInfo.readLine()) != null) {
+                // Split the line into fields
+                String[] infoFields = diseaseInfoLine.split(",");
+                // Check if the disease code matches
+                if (infoFields[0].equals(diseaseCode)) {
+                    // Display the matching data
+                    out.println("<tr>");
+                    out.println("<td>" + fields[1] + "</td>");
+                    out.println("<td>" + infoFields[1] + "</td>");
+                    out.println("<td>" + fields[2] + "</td>");
+                    out.println("<td>" + fields[0] + "</td>");
+                    out.println("<td>" + fields[3] + "</td>");
+                    out.println("<td>" + fields[4] + "</td>");
+                    out.println("<td>" + infoFields[2] + "</td>");
+                    out.println("</tr>");
+                    // Update the totals
+                    totalCount += Integer.parseInt(fields[4]);
+                    totalRate += Double.parseDouble(infoFields[2]);
+                }
+            }
+            // Reset the disease info file pointer
+            diseaseInfo = new BufferedReader(new FileReader(diseaseInfoFile));
+        }
+    }
+    // Close the files
+    diseaseData.close();
+    diseaseInfo.close();
+    // Display the summary footer
+    out.println("<tr><td colspan=\"5\">TOTALS</td><td>" + totalCount + "</td><td>" + totalRate + "</td></tr>");
+    out.println("</table>");
+}
