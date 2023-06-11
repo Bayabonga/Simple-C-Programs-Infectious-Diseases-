@@ -20,11 +20,18 @@ void extractDiseaseData(String diseaseDataFile, String diseaseInfoFile, String d
                 // Check if the disease code matches
                 if (infoFields[0].equals(diseaseCode)) {
                     // Display the matching data
-                    out.println("Disease: " + infoFields[1]);
-                    out.println("County: " + fields[0]);
+            calculate rate (count*100000/population)
+            calculate total rate (total rate + rate)
+            calculate total count (total count + count)
+                    out.println("Dis-Code: " + infoFields[1]);
+                    out.println("Dis-Name: " + fields[0]);
                     out.println("Year: " + fields[2]);
-                    out.println("Sex: " + fields[3]);
-                    out.println("Cases: " + fields[4]);
+                    out.println("Country: " + fields[3]);
+                    out.println("Gender: " + fields[4]);
+                    out.println("count: " + count);
+                    out.println("Rate: " + rate);
+                    out.println("Total: " + count,Rate);
+                    out.println("===");
                     out.println("<br>");
                 }
             }
